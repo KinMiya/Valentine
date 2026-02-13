@@ -9,14 +9,13 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* iPhone-friendly font stack: system fonts, clean and readable */
+            /* iPhone-friendly font stack */
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             overflow: hidden;
             background-color: #ffdddd;
-            /* prevent pull-to-refresh and other touch actions that could interfere */
             touch-action: pan-y pinch-zoom;
         }
 
@@ -38,7 +37,7 @@
             background-size: 150px 150px, 200px 200px, 300px 300px, 40px 40px;
         }
 
-        /* floating sparkles (hidden on very small screens to reduce clutter) */
+        /* floating sparkles (some hidden on mobile) */
         .float-heart, .sparkle {
             position: fixed;
             pointer-events: none;
@@ -67,7 +66,6 @@
             0% { opacity: 0.2; transform: scale(0.8); }
             100% { opacity: 0.9; transform: scale(1.3); }
         }
-        /* hide some sparkles on small screens to avoid overlapping */
         @media (max-width: 600px) {
             .float-heart:nth-of-type(2), .sparkle {
                 display: none;
@@ -143,9 +141,9 @@
             visibility: hidden;
             transition: opacity 0.4s ease;
             overflow-y: auto;
-            padding: 1rem 1rem 5rem 1rem; /* extra bottom padding for the cursed cross */
+            padding: 1rem 1rem 5rem 1rem;
             z-index: 15;
-            -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
+            -webkit-overflow-scrolling: touch;
         }
 
         .page.active {
@@ -162,11 +160,10 @@
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
             flex-wrap: wrap;
-            position: relative;
             z-index: 30;
         }
         .heart-outline {
-            font-size: 2.5rem; /* smaller on mobile */
+            font-size: 2.5rem;
             line-height: 1;
             color: #ff4d4d;
             text-shadow: 0 0 4px #ffb3b3, 2px 4px 6px rgba(200,0,0,0.2);
@@ -245,7 +242,7 @@
             padding: 1.5rem;
         }
 
-        /* cursed cross - made more touch friendly */
+        /* cursed cross */
         .cursed-cross {
             position: fixed;
             bottom: 15px;
@@ -293,7 +290,7 @@
             margin-left: 5px;
         }
 
-        /* I love you light red (last page) */
+        /* I love you light red */
         .iloveyou-light {
             position: fixed;
             bottom: 25px;
@@ -340,13 +337,12 @@
             justify-content: center;
             min-height: 70vh;
             width: 100%;
-            position: relative;
             z-index: 40;
         }
 
         .gif-side {
             display: flex;
-            flex-direction: column; /* stack on mobile */
+            flex-direction: column;
             align-items: center;
             gap: 1rem;
             width: 100%;
@@ -407,7 +403,7 @@
 
         /* ========== INTERACTIVE ELEMENTS ========== */
 
-        /* press & hold heart (page5) */
+        /* press & hold heart */
         .hold-heart-container {
             display: flex;
             flex-direction: column;
@@ -427,7 +423,6 @@
             user-select: none;
             transition: transform 0.2s;
             filter: drop-shadow(0 10px 8px #ff8888);
-            position: relative;
             touch-action: manipulation;
         }
         .press-heart:active {
@@ -530,7 +525,7 @@
             pointer-events: none;
         }
 
-        /* additional mobile tweaks */
+        /* mobile tweaks */
         @media (max-width: 480px) {
             .love-counter {
                 font-size: 1.1rem;
@@ -559,7 +554,7 @@
     <div class="bg-texture"></div>
     <div class="heart-rain" id="heartRain"></div>
     <div class="love-counter">❤️ 143</div>
-    <!-- floating sparkles (some will be hidden on mobile) -->
+    <!-- floating sparkles -->
     <div class="float-heart" style="top: 15%; left: 8%;">🌸</div>
     <div class="float-heart" style="top: 75%; left: 85%;">💘</div>
     <div class="float-heart" style="top: 30%; left: 20%;">✨</div>
@@ -569,7 +564,7 @@
     <div class="pages">
         <!-- PAGE 1 -->
         <div class="page active" id="page1">
-            <div class="hearts-row"><!-- 7 hearts will be inserted by js if desired, but not necessary --></div>
+            <div class="hearts-row"></div>
             <div class="page-content" id="page1Content">
                 <div class="red-box">
                     <div class="draw-text" style="font-size:1.8rem;">Happy valentine day<br>my love and my everything</div>
@@ -615,13 +610,15 @@
             <div class="cursed-cross next-button" data-next="4">✝💌❤️<span class="press-text">press me</span></div>
         </div>
 
-        <!-- PAGE 4 (flowers + DOG) -->
+        <!-- PAGE 4 (flowers + DOG) – now with image placeholder -->
         <div class="page" id="page4">
             <div class="hearts-row"></div>
             <div class="page-content" id="page4Content">
                 <div class="red-box">
-                    <!-- Replace with actual flowers image if available -->
-                    <div style="background: #ffe0e0; width: 100%; min-height: 150px; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #b3004d; font-size: 2rem;">🌹🌷🌸🌺</div>
+                    <!-- ===== INSERT YOUR FLOWER IMAGE HERE ===== -->
+                    <!-- Replace the src attribute with your image URL or file path -->
+                    <img src="IMG_2711.jpg" style="max-width:100%; border-radius:20px; display:block;">
+                    <!-- If you don't have an image yet, the alt text will show briefly, but you can also keep a placeholder emoji fallback if needed -->
                 </div>
                 <h2 class="sub-text draw-text">Flowers for you my beloved</h2>
             </div>
@@ -682,7 +679,7 @@
             // heart rain generator
             const rainContainer = document.getElementById('heartRain');
             const hearts = ['❤️','🧡','💛','💚','💙','💜','🤍','💖','💗','💘','💝'];
-            for (let i=0; i<25; i++) { // fewer drops on mobile
+            for (let i=0; i<25; i++) {
                 let d = document.createElement('div');
                 d.className = 'heart-drop';
                 d.style.left = Math.random()*100+'%';
@@ -699,7 +696,6 @@
                 pages.forEach(p => p.classList.remove('active'));
                 const target = document.getElementById(`page${num}`);
                 if (target) target.classList.add('active');
-                // slide-up and draw
                 const content = target?.querySelector('.page-content');
                 if (content) {
                     content.classList.remove('slide-up');
@@ -738,7 +734,7 @@
                         fillBar.style.width = Math.min(holdProgress, 100) + '%';
                         if (holdProgress >= 100) {
                             clearInterval(holdInterval);
-                            for (let i=0; i<20; i++) { // fewer hearts on mobile
+                            for (let i=0; i<20; i++) {
                                 setTimeout(() => {
                                     let heart = document.createElement('div');
                                     heart.className = 'shower-heart';
@@ -771,7 +767,7 @@
             const page6 = document.getElementById('page6');
             const showerContainer = document.getElementById('heartShower');
             page6.addEventListener('click', function(e) {
-                for (let i=0; i<10; i++) { // fewer on mobile
+                for (let i=0; i<10; i++) {
                     setTimeout(() => {
                         let heart = document.createElement('div');
                         heart.className = 'shower-heart';
