@@ -2,19 +2,22 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=yes">
     <title>valentine · press & hold · secret dog</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Comic Neue', 'Patrick Hand', cursive, sans-serif;
+            /* iPhone-friendly font stack: system fonts, clean and readable */
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
         body {
             overflow: hidden;
             background-color: #ffdddd;
+            /* prevent pull-to-refresh and other touch actions that could interfere */
+            touch-action: pan-y pinch-zoom;
         }
 
         /* ========== BACKGROUND TEXTURE ========== */
@@ -35,14 +38,16 @@
             background-size: 150px 150px, 200px 200px, 300px 300px, 40px 40px;
         }
 
-        /* floating sparkles */
-        .float-heart {
+        /* floating sparkles (hidden on very small screens to reduce clutter) */
+        .float-heart, .sparkle {
             position: fixed;
+            pointer-events: none;
+            z-index: 1;
+        }
+        .float-heart {
             font-size: 1.8rem;
             opacity: 0.5;
             color: #ffb3b3;
-            pointer-events: none;
-            z-index: 1;
             animation: floatAround 12s infinite ease-in-out;
             filter: drop-shadow(0 0 3px #ff8888);
         }
@@ -53,17 +58,20 @@
             100% { transform: translate(0, 0) rotate(0deg); }
         }
         .sparkle {
-            position: fixed;
             font-size: 1.2rem;
             opacity: 0.6;
             color: #ffe0e0;
-            pointer-events: none;
-            z-index: 1;
             animation: sparkleTwinkle 3s infinite alternate;
         }
         @keyframes sparkleTwinkle {
             0% { opacity: 0.2; transform: scale(0.8); }
             100% { opacity: 0.9; transform: scale(1.3); }
+        }
+        /* hide some sparkles on small screens to avoid overlapping */
+        @media (max-width: 600px) {
+            .float-heart:nth-of-type(2), .sparkle {
+                display: none;
+            }
         }
 
         /* heart rain (permanent) */
@@ -93,14 +101,14 @@
         /* love counter */
         .love-counter {
             position: fixed;
-            top: 20px;
-            left: 20px;
-            background: rgba(255, 220, 220, 0.7);
+            top: 10px;
+            left: 10px;
+            background: rgba(255, 220, 220, 0.8);
             backdrop-filter: blur(3px);
             border: 2px solid #ffb3b3;
             border-radius: 40px;
-            padding: 8px 18px;
-            font-size: 1.6rem;
+            padding: 6px 14px;
+            font-size: 1.3rem;
             color: #b3004d;
             box-shadow: 0 4px 10px rgba(200,0,0,0.2);
             z-index: 200;
@@ -135,8 +143,9 @@
             visibility: hidden;
             transition: opacity 0.4s ease;
             overflow-y: auto;
-            padding: 1rem 2rem 4rem 2rem;
+            padding: 1rem 1rem 5rem 1rem; /* extra bottom padding for the cursed cross */
             z-index: 15;
+            -webkit-overflow-scrolling: touch; /* smooth scrolling on iOS */
         }
 
         .page.active {
@@ -149,21 +158,26 @@
         .hearts-row {
             display: flex;
             justify-content: center;
-            gap: 0.8rem;
+            gap: 0.5rem;
             margin-top: 0.5rem;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             flex-wrap: wrap;
             position: relative;
             z-index: 30;
         }
         .heart-outline {
-            font-size: 3rem;
+            font-size: 2.5rem; /* smaller on mobile */
             line-height: 1;
             color: #ff4d4d;
             text-shadow: 0 0 4px #ffb3b3, 2px 4px 6px rgba(200,0,0,0.2);
             animation: sway 3s infinite ease-in-out;
             display: inline-block;
             position: relative;
+        }
+        @media (min-width: 600px) {
+            .heart-outline {
+                font-size: 3rem;
+            }
         }
         .heart-outline::before {
             content: "";
@@ -203,47 +217,47 @@
         /* red box with bow */
         .red-box {
             border: 3px solid #ff4d4d;
-            background-color: rgba(255, 240, 240, 0.7);
+            background-color: rgba(255, 240, 240, 0.85);
             backdrop-filter: blur(2px);
-            padding: 1.8rem 2.2rem;
+            padding: 1.5rem 1.2rem;
             border-radius: 30px 20px 30px 20px;
             box-shadow: 0 0 0 3px #ffb3b3 inset, 0 0 0 5px #ff4d4d, 10px 10px 20px rgba(200, 80, 80, 0.2);
-            max-width: 700px;
-            margin: 1rem auto;
+            max-width: 90vw;
+            margin: 0.5rem auto;
             text-align: center;
             position: relative;
         }
         .red-box::before {
             content: "🎀";
             position: absolute;
-            top: -25px;
+            top: -20px;
             left: 50%;
             transform: translateX(-50%) rotate(-5deg);
-            font-size: 2.5rem;
+            font-size: 2.2rem;
             filter: drop-shadow(0 6px 4px #ffaaaa);
             z-index: 35;
             pointer-events: none;
         }
 
         .big-box {
-            max-width: 800px;
-            min-height: 300px;
-            padding: 2.5rem;
+            max-width: 95vw;
+            min-height: 200px;
+            padding: 1.5rem;
         }
 
-        /* cursed cross */
+        /* cursed cross - made more touch friendly */
         .cursed-cross {
             position: fixed;
-            bottom: 20px;
-            right: 20px;
+            bottom: 15px;
+            right: 15px;
             background-color: #fff0f0;
             color: #9e9e9e;
-            padding: 12px 18px;
+            padding: 12px 16px;
             border-radius: 60px 10px 60px 10px;
-            font-size: 2rem;
+            font-size: 1.8rem;
             display: flex;
             align-items: center;
-            gap: 10px;
+            gap: 8px;
             box-shadow: 0 0 0 3px white, 0 0 0 5px #ffb3b3, 0 8px 0 #b3b3b3;
             cursor: pointer;
             z-index: 100;
@@ -251,36 +265,53 @@
             animation: cursedShake 2.5s infinite;
             line-height: 1;
             border: 2px solid #ffa0a0;
+            touch-action: manipulation;
         }
         .cursed-cross:hover {
             transform: scale(1.05) translateY(-3px);
             background-color: #ffe4e4;
             box-shadow: 0 0 0 3px white, 0 0 0 5px #ff8080, 0 5px 0 #b3b3b3;
         }
+        .cursed-cross:active {
+            transform: scale(0.98);
+        }
         @keyframes cursedShake {
             0%, 100% { transform: rotate(0deg); }
             10%, 30%, 50% { transform: rotate(-3deg); }
             20%, 40% { transform: rotate(3deg); }
         }
+        .press-text {
+            font-size: 1rem;
+            max-width: 0;
+            overflow: hidden;
+            white-space: nowrap;
+            transition: max-width 0.3s;
+        }
+        .cursed-cross:hover .press-text,
+        .cursed-cross:active .press-text {
+            max-width: 100px;
+            margin-left: 5px;
+        }
 
         /* I love you light red (last page) */
         .iloveyou-light {
             position: fixed;
-            bottom: 30px;
-            right: 30px;
-            font-size: 2.5rem;
+            bottom: 25px;
+            right: 25px;
+            font-size: 2rem;
             font-weight: bold;
             color: #ffb3b3;
             text-shadow: 0 0 3px #ff4d4d, 0 0 8px white;
-            letter-spacing: 3px;
-            background-color: rgba(255, 220, 220, 0.5);
-            padding: 10px 20px;
+            letter-spacing: 2px;
+            background-color: rgba(255, 220, 220, 0.6);
+            padding: 8px 16px;
             border-radius: 50px;
             border: 2px dashed #ffa0a0;
             transform: rotate(-2deg);
             z-index: 100;
             backdrop-filter: blur(2px);
             cursor: default;
+            pointer-events: none;
         }
 
         /* stamp */
@@ -288,9 +319,9 @@
             position: absolute;
             bottom: 10px;
             left: 10px;
-            font-size: 1.2rem;
+            font-size: 1rem;
             background: rgba(255, 220, 220, 0.7);
-            padding: 0.2rem 0.8rem;
+            padding: 0.2rem 0.6rem;
             border-radius: 30px;
             border: 2px dashed #ff8080;
             color: #b3004d;
@@ -315,29 +346,42 @@
 
         .gif-side {
             display: flex;
-            justify-content: space-between;
+            flex-direction: column; /* stack on mobile */
             align-items: center;
             gap: 1rem;
             width: 100%;
-            max-width: 1000px;
-            margin: 1rem auto;
+            max-width: 100%;
+            margin: 0.5rem auto;
         }
-        .gif-side iframe, .gif-side img {
+        @media (min-width: 600px) {
+            .gif-side {
+                flex-direction: row;
+                justify-content: space-between;
+            }
+        }
+        .gif-side iframe {
             border-radius: 30px;
             border: 3px solid #ff9999;
-            max-width: 45%;
-            height: auto;
+            max-width: 100%;
+            width: 100%;
+            height: 200px;
             box-shadow: 8px 8px 0 #ffb3b3;
         }
+        @media (min-width: 600px) {
+            .gif-side iframe {
+                max-width: 48%;
+                height: 250px;
+            }
+        }
 
-        /* love list styling – now with numbered items */
+        /* love list */
         .love-list {
             text-align: left;
-            font-size: 1.1rem;
-            line-height: 1.8;
+            font-size: 1rem;
+            line-height: 1.6;
             color: #a64d4d;
-            font-weight: 600;
-            padding: 0.5rem 1rem;
+            font-weight: 500;
+            padding: 0.2rem 0.5rem;
         }
         .love-list span {
             display: block;
@@ -346,34 +390,36 @@
         iframe {
             border: none;
             width: 100%;
-            height: 250px;
             border-radius: 20px;
         }
 
         .sub-text {
-            font-size: 2rem;
-            margin-top: 1rem;
+            font-size: 1.8rem;
+            margin-top: 0.8rem;
             color: #b3004d;
             text-shadow: 2px 2px 0 #ffb3b3;
             background: rgba(255, 255, 255, 0.4);
-            padding: 0.5rem 1.5rem;
+            padding: 0.4rem 1rem;
             border-radius: 40px;
             backdrop-filter: blur(2px);
+            text-align: center;
         }
 
         /* ========== INTERACTIVE ELEMENTS ========== */
 
-        /* --- press & hold heart (page5) --- */
+        /* press & hold heart (page5) */
         .hold-heart-container {
             display: flex;
             flex-direction: column;
             align-items: center;
             gap: 1.5rem;
+            width: 100%;
         }
         .hold-message {
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #b3004d;
             text-shadow: 0 0 5px #ffb3b3;
+            text-align: center;
         }
         .press-heart {
             font-size: 8rem;
@@ -382,12 +428,14 @@
             transition: transform 0.2s;
             filter: drop-shadow(0 10px 8px #ff8888);
             position: relative;
+            touch-action: manipulation;
         }
         .press-heart:active {
             transform: scale(0.95);
         }
         .heart-fill-bar {
-            width: 200px;
+            width: 70%;
+            max-width: 280px;
             height: 30px;
             background-color: #ffcccc;
             border: 3px solid #ff4d4d;
@@ -406,28 +454,29 @@
             transition: box-shadow 0.2s;
         }
 
-        /* --- secret dog on page4 --- */
+        /* secret dog */
         .dog-container {
             position: fixed;
-            bottom: 30px;
-            left: 20px;
+            bottom: 20px;
+            left: 15px;
             z-index: 200;
             cursor: pointer;
             filter: drop-shadow(0 10px 8px rgba(0,0,0,0.1));
             transition: transform 0.3s;
+            touch-action: manipulation;
         }
         .dog-container:hover {
             transform: scale(1.05);
         }
         .dog-emoji {
-            font-size: 4rem;
+            font-size: 3.5rem;
             display: inline-block;
             animation: blink 3s infinite, breathe 2s infinite ease-in-out;
             transform-origin: bottom;
         }
         @keyframes blink {
             0%, 48%, 52%, 100% { transform: scaleY(1); }
-            50% { transform: scaleY(0.1); } /* blink */
+            50% { transform: scaleY(0.1); }
         }
         @keyframes breathe {
             0%, 100% { transform: translateY(0); }
@@ -446,7 +495,7 @@
             display: inline-block;
         }
 
-        /* --- heart shower (last page) --- */
+        /* heart shower */
         .click-heart-shower {
             position: absolute;
             top: 0;
@@ -468,25 +517,41 @@
             100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.5); }
         }
 
-        /* --- secret page (page7) with smooth fade --- */
+        /* secret page fade */
         .secret-note {
             transition: opacity 1s ease;
-            font-size: 2rem;
+            font-size: 1.8rem;
             color: #b3004d;
             text-align: center;
-            margin: 2rem;
+            margin: 1.5rem;
         }
         #secretNote2 {
             opacity: 0;
             pointer-events: none;
         }
-        .fade-out {
-            animation: fadeOut 7s forwards;
-        }
-        @keyframes fadeOut {
-            0% { opacity: 1; }
-            90% { opacity: 1; }
-            100% { opacity: 0; }
+
+        /* additional mobile tweaks */
+        @media (max-width: 480px) {
+            .love-counter {
+                font-size: 1.1rem;
+                padding: 4px 10px;
+            }
+            .cursed-cross {
+                padding: 10px 12px;
+                font-size: 1.6rem;
+            }
+            .press-heart {
+                font-size: 6rem;
+            }
+            .hold-message {
+                font-size: 1.5rem;
+            }
+            .sub-text {
+                font-size: 1.5rem;
+            }
+            .secret-note {
+                font-size: 1.4rem;
+            }
         }
     </style>
 </head>
@@ -494,7 +559,7 @@
     <div class="bg-texture"></div>
     <div class="heart-rain" id="heartRain"></div>
     <div class="love-counter">❤️ 143</div>
-    <!-- floating sparkles -->
+    <!-- floating sparkles (some will be hidden on mobile) -->
     <div class="float-heart" style="top: 15%; left: 8%;">🌸</div>
     <div class="float-heart" style="top: 75%; left: 85%;">💘</div>
     <div class="float-heart" style="top: 30%; left: 20%;">✨</div>
@@ -504,18 +569,18 @@
     <div class="pages">
         <!-- PAGE 1 -->
         <div class="page active" id="page1">
-            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="hearts-row"><!-- 7 hearts will be inserted by js if desired, but not necessary --></div>
             <div class="page-content" id="page1Content">
                 <div class="red-box">
-                    <div class="draw-text" style="font-size:2.2rem;">Happy valentine day<br>my love and my everything</div>
+                    <div class="draw-text" style="font-size:1.8rem;">Happy valentine day<br>my love and my everything</div>
                 </div>
             </div>
             <div class="cursed-cross next-button" data-next="2">✝💌❤️<span class="press-text">press me</span></div>
         </div>
 
-        <!-- PAGE 2 – updated love list -->
+        <!-- PAGE 2 – love list -->
         <div class="page" id="page2">
-            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="hearts-row"></div>
             <div class="page-content" id="page2Content">
                 <div class="gif-side">
                     <iframe src="https://tenor.com/embed/7102673578086768359"></iframe>
@@ -542,9 +607,9 @@
 
         <!-- PAGE 3 (horimiya) -->
         <div class="page" id="page3">
-            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="hearts-row"></div>
             <div class="page-content" id="page3Content">
-                <div class="red-box"><iframe src="https://tenor.com/embed/6944457256172224561" style="height:300px;"></iframe></div>
+                <div class="red-box"><iframe src="https://tenor.com/embed/6944457256172224561" style="height:250px;"></iframe></div>
                 <h2 class="sub-text draw-text">me and you, Forever</h2>
             </div>
             <div class="cursed-cross next-button" data-next="4">✝💌❤️<span class="press-text">press me</span></div>
@@ -552,10 +617,11 @@
 
         <!-- PAGE 4 (flowers + DOG) -->
         <div class="page" id="page4">
-            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="hearts-row"></div>
             <div class="page-content" id="page4Content">
                 <div class="red-box">
-                    <img src="IMG_2711.jpg" alt="Flowers" style="max-width:100%; border-radius:20px;">
+                    <!-- Replace with actual flowers image if available -->
+                    <div style="background: #ffe0e0; width: 100%; min-height: 150px; border-radius: 20px; display: flex; align-items: center; justify-content: center; color: #b3004d; font-size: 2rem;">🌹🌷🌸🌺</div>
                 </div>
                 <h2 class="sub-text draw-text">Flowers for you my beloved</h2>
             </div>
@@ -564,13 +630,12 @@
                 <span class="dog-emoji">🐕</span>
                 <span class="dog-smile">😊</span>
             </div>
-            <!-- cross now goes to page5 (hold heart) -->
             <div class="cursed-cross next-button" data-next="5">✝💌❤️<span class="press-text">press me</span></div>
         </div>
 
         <!-- PAGE 5 (press and hold heart) -->
         <div class="page" id="page5">
-            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="hearts-row"></div>
             <div class="page-content" id="page5Content">
                 <div class="hold-heart-container">
                     <div class="hold-message">Hold the heart if you love me</div>
@@ -582,11 +647,11 @@
             </div>
         </div>
 
-        <!-- PAGE 6 – special message inserted -->
+        <!-- PAGE 6 – special message -->
         <div class="page" id="page6">
-            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="hearts-row"></div>
             <div class="page-content" id="page6Content">
-                <div class="red-box big-box" style="text-align: left; font-size: 1.15rem; line-height: 1.7; color: #b3004d;">
+                <div class="red-box big-box" style="text-align: left; font-size: 1rem; line-height: 1.6; color: #b3004d;">
                     <p>Today is a special day to me, not because of history. Not because of anyone, but because it gives me the chance to show my love for you. A chance to grab your hand, pull you closer. So come on to me, come and hold my hand. Pull me into you, tell me how much you love me. And I'll make my heart yours, after all...you're everything I wished for, everything I desired. When we're together, I forget about everyone. No one matters to me as you do. And no one will catch me like your flow.</p>
                     <p>I heard that, you feel love when you see it. The and that shape of love for me is you, so I have to admit...I was yours the day I was born, so let's not hesitate. I'll hold your hand, pull you closer. Kiss you deeply, and lovely. So tell me? Does that feel like anything other than love? When...we dance together under light, we hold each other after a fight, when all we want is "that". And that is...our love. You can tell me it's a lie, I'll take your hand and place it on my heart. Because my heartbeat would never lie when it says "I love you".</p>
                     <p>Eyes meet, heart feels, souls recognize. And it just leads to one answer, you. And only you. Every dream, every thought, every breath. It only exists for you baby. Your heartbeat is getting louder, saying "I love you" to me. How can I ever ignore this? When your eyes is telling me to stare, when your lips is telling me to get close. When your soul is pulling mine.</p>
@@ -595,22 +660,19 @@
                 <div class="stamp" style="bottom:80px; left:30px;">always yours</div>
             </div>
             <div class="iloveyou-light">I love you</div>
-            <!-- container for shower hearts -->
             <div class="click-heart-shower" id="heartShower"></div>
         </div>
 
-        <!-- PAGE 7 (secret page) with smooth fade for second note -->
+        <!-- PAGE 7 (secret page) -->
         <div class="page" id="page7">
-            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="hearts-row"></div>
             <div class="page-content" id="page7Content">
                 <div class="secret-note" id="secretNote1">You found the hidden love note.</div>
-                <!-- second note starts invisible (opacity 0) - will fade in after 7s -->
                 <div class="secret-note" id="secretNote2" style="opacity:0; pointer-events:none;">
                     <iframe src="https://tenor.com/embed/2650058413365222923" style="height:200px;"></iframe>
                     <p>its nothing, I just wanted to tell you that your smile is the prettiest smile ever</p>
                 </div>
             </div>
-            <!-- cross to go back to page4 -->
             <div class="cursed-cross next-button" data-next="4">✝💌❤️<span class="press-text">back</span></div>
         </div>
     </div>
@@ -620,13 +682,13 @@
             // heart rain generator
             const rainContainer = document.getElementById('heartRain');
             const hearts = ['❤️','🧡','💛','💚','💙','💜','🤍','💖','💗','💘','💝'];
-            for (let i=0; i<30; i++) {
+            for (let i=0; i<25; i++) { // fewer drops on mobile
                 let d = document.createElement('div');
                 d.className = 'heart-drop';
                 d.style.left = Math.random()*100+'%';
                 d.style.animationDuration = (Math.random()*4+4)+'s';
                 d.style.animationDelay = Math.random()*5+'s';
-                d.style.fontSize = (Math.random()*1.5+1)+'rem';
+                d.style.fontSize = (Math.random()*1.2+0.9)+'rem';
                 d.innerHTML = hearts[Math.floor(Math.random()*hearts.length)];
                 rainContainer.appendChild(d);
             }
@@ -659,26 +721,24 @@
                 });
             });
 
-            // ---- PRESS AND HOLD (page5) ----
+            // PRESS AND HOLD (page5)
             const holdHeart = document.getElementById('holdHeart');
             const fillBar = document.getElementById('heartFill');
             let holdInterval, holdProgress = 0;
             if (holdHeart) {
                 holdHeart.addEventListener('mousedown', startHold);
-                holdHeart.addEventListener('touchstart', startHold);
+                holdHeart.addEventListener('touchstart', startHold, {passive: false});
                 function startHold(e) {
                     e.preventDefault();
                     holdProgress = 0;
                     fillBar.style.width = '0%';
-                    // glow
                     document.getElementById('page5').classList.add('glow-pink');
                     holdInterval = setInterval(() => {
-                        holdProgress += 2; // fill in ~1.5 sec (50 * 30ms)
+                        holdProgress += 2;
                         fillBar.style.width = Math.min(holdProgress, 100) + '%';
                         if (holdProgress >= 100) {
                             clearInterval(holdInterval);
-                            // confetti hearts
-                            for (let i=0; i<30; i++) {
+                            for (let i=0; i<20; i++) { // fewer hearts on mobile
                                 setTimeout(() => {
                                     let heart = document.createElement('div');
                                     heart.className = 'shower-heart';
@@ -691,7 +751,6 @@
                                     setTimeout(() => heart.remove(), 2000);
                                 }, i*30);
                             }
-                            // go to page6
                             setTimeout(() => {
                                 showPage(6);
                                 document.getElementById('page5').classList.remove('glow-pink');
@@ -701,24 +760,25 @@
                 }
                 window.addEventListener('mouseup', cancelHold);
                 window.addEventListener('touchend', cancelHold);
+                window.addEventListener('touchcancel', cancelHold);
                 function cancelHold() {
                     clearInterval(holdInterval);
                     document.getElementById('page5').classList.remove('glow-pink');
                 }
             }
 
-            // ---- CLICK ANYWHERE HEART SHOWER (page6) ----
+            // CLICK ANYWHERE HEART SHOWER (page6)
             const page6 = document.getElementById('page6');
             const showerContainer = document.getElementById('heartShower');
             page6.addEventListener('click', function(e) {
-                for (let i=0; i<15; i++) {
+                for (let i=0; i<10; i++) { // fewer on mobile
                     setTimeout(() => {
                         let heart = document.createElement('div');
                         heart.className = 'shower-heart';
-                        heart.style.left = (e.clientX - 20 + (Math.random()-0.5)*100) + 'px';
-                        heart.style.top = (e.clientY - 20 + (Math.random()-0.5)*100) + 'px';
-                        let dx = (Math.random()-0.5)*300;
-                        let dy = (Math.random()-0.5)*300 - 100; // upward bias
+                        heart.style.left = (e.clientX - 20 + (Math.random()-0.5)*80) + 'px';
+                        heart.style.top = (e.clientY - 20 + (Math.random()-0.5)*80) + 'px';
+                        let dx = (Math.random()-0.5)*200;
+                        let dy = (Math.random()-0.5)*200 - 80;
                         heart.style.setProperty('--dx', dx+'px');
                         heart.style.setProperty('--dy', dy+'px');
                         heart.innerHTML = ['❤️','💖','💗','💘','💝'][Math.floor(Math.random()*5)];
@@ -726,32 +786,29 @@
                         setTimeout(() => heart.remove(), 2000);
                     }, i*30);
                 }
-                // subtle glow pulse
                 page6.style.transition = 'box-shadow 0.2s';
                 page6.style.boxShadow = 'inset 0 0 50px #ffb3b3';
                 setTimeout(() => page6.style.boxShadow = 'none', 200);
             });
 
-            // ---- SECRET DOG on page4 with SMOOTH FADE for secret notes ----
+            // SECRET DOG
             const dog = document.getElementById('secretDog');
             dog.addEventListener('click', () => {
                 dog.classList.add('clicked');
                 showPage(7);
-                // After 7 seconds, fade out note1 and fade in note2 smoothly
                 setTimeout(() => {
                     const note1 = document.getElementById('secretNote1');
                     const note2 = document.getElementById('secretNote2');
-                    // note1 fades out, note2 fades in
                     note1.style.transition = 'opacity 1s';
                     note2.style.transition = 'opacity 1s';
                     note1.style.opacity = '0';
                     note1.style.pointerEvents = 'none';
                     note2.style.opacity = '1';
                     note2.style.pointerEvents = 'auto';
-                }, 7000); // after 7 sec, start the 1-second fade
+                }, 7000);
             });
 
-            // initial page1 animations
+            // initial animations
             window.addEventListener('load', () => {
                 document.querySelectorAll('#page1 .draw-text').forEach(el => el.classList.add('draw-text'));
                 document.getElementById('page1Content')?.classList.add('slide-up');
