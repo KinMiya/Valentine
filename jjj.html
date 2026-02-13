@@ -1,0 +1,458 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>happy valentine · my love</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Segoe UI', 'Comic Neue', cursive, sans-serif;
+        }
+
+        body {
+            overflow: hidden;
+            background-color: #ffdddd; /* light red base */
+        }
+
+        /* pages container */
+        .pages {
+            position: relative;
+            width: 100vw;
+            height: 100vh;
+        }
+
+        .page {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background-color: #ffdddd; /* light red */
+            opacity: 0;
+            visibility: hidden;
+            transition: opacity 0.4s ease;
+            overflow-y: auto;
+            padding: 1rem 2rem 4rem 2rem;
+        }
+
+        .page.active {
+            opacity: 1;
+            visibility: visible;
+            z-index: 10;
+        }
+
+        /* hearts hanging from above (7 outline hearts) */
+        .hearts-row {
+            display: flex;
+            justify-content: center;
+            gap: 0.8rem;
+            margin-top: 0.5rem;
+            margin-bottom: 1rem;
+            flex-wrap: wrap;
+        }
+
+        .heart-outline {
+            font-size: 2.8rem;
+            line-height: 1;
+            color: #ff4d4d; /* red */
+            text-shadow: 0 0 2px #b30000;
+            transform: rotate(0deg);
+            animation: sway 3s infinite ease-in-out;
+            display: inline-block;
+        }
+
+        @keyframes sway {
+            0% { transform: rotate(-5deg); }
+            50% { transform: rotate(5deg); }
+            100% { transform: rotate(-5deg); }
+        }
+
+        /* slide up animation for page content */
+        .slide-up {
+            animation: slideUp 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
+        }
+
+        @keyframes slideUp {
+            0% { opacity: 0; transform: translateY(40px); }
+            100% { opacity: 1; transform: translateY(0); }
+        }
+
+        /* drawing animation for text (cute sketchy effect) */
+        .draw-text {
+            animation: draw 2s ease-out forwards;
+            display: inline-block; /* for shadow */
+        }
+
+        @keyframes draw {
+            0% { text-shadow: 0 0 0 #ff8888, 0 0 0 #ff8888, 0 0 0 #ff8888; opacity: 0.2; letter-spacing: 5px; }
+            30% { text-shadow: 2px 2px 0 #ffa0a0, -1px -1px 0 #ffbebe; opacity: 0.8; }
+            60% { text-shadow: -2px 2px 0 #ffa0a0, 2px -1px 0 #ffbebe; }
+            100% { text-shadow: 0 0 0 transparent; opacity: 1; letter-spacing: normal; }
+        }
+
+        /* red lined square / box */
+        .red-box {
+            border: 3px solid #ff4d4d;
+            background-color: rgba(255, 200, 200, 0.3);
+            padding: 1.5rem 2rem;
+            border-radius: 20px;
+            box-shadow: 0 0 0 2px #ffb3b3 inset, 0 0 0 3px #ff4d4d;
+            max-width: 700px;
+            margin: 1rem auto;
+            text-align: center;
+        }
+
+        .big-box {
+            max-width: 800px;
+            min-height: 300px;
+            padding: 2.5rem;
+        }
+
+        /* cursed white cross + letter (bottom right) */
+        .cursed-cross {
+            position: fixed;
+            bottom: 20px;
+            right: 20px;
+            background-color: #fff0f0;
+            color: #9e9e9e;
+            padding: 12px 18px;
+            border-radius: 60px 10px 60px 10px;
+            font-size: 2rem;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 0 0 3px white, 0 0 0 5px #ffb3b3;
+            cursor: pointer;
+            z-index: 100;
+            transition: 0.2s;
+            animation: cursedShake 2.5s infinite;
+            line-height: 1;
+        }
+
+        .cursed-cross:hover {
+            transform: scale(1.05);
+            background-color: #ffe4e4;
+        }
+
+        @keyframes cursedShake {
+            0%, 100% { transform: rotate(0deg); }
+            10%, 30%, 50% { transform: rotate(-3deg); }
+            20%, 40% { transform: rotate(3deg); }
+        }
+
+        .cross-symbol {
+            font-size: 2.2rem;
+            color: white;
+            filter: drop-shadow(0 0 3px #b30000);
+        }
+
+        .press-text {
+            font-size: 1.2rem;
+            font-weight: bold;
+            color: #b30000;
+            background: white;
+            padding: 0.2rem 0.6rem;
+            border-radius: 30px;
+        }
+
+        /* i love you in light red (last page) */
+        .iloveyou-light {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            font-size: 2.5rem;
+            font-weight: bold;
+            color: #ffb3b3; /* light red */
+            text-shadow: 0 0 3px #ff4d4d, 0 0 8px white;
+            letter-spacing: 3px;
+            background-color: rgba(255, 220, 220, 0.4);
+            padding: 10px 20px;
+            border-radius: 50px;
+            border: 2px dashed #ffa0a0;
+            transform: rotate(-2deg);
+            z-index: 100;
+        }
+
+        /* page content wrapper */
+        .page-content {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 70vh;
+            width: 100%;
+        }
+
+        /* gif side by side (page2) */
+        .gif-side {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            gap: 1rem;
+            width: 100%;
+            max-width: 1000px;
+            margin: 1rem auto;
+        }
+
+        .gif-side iframe, .gif-side img {
+            border-radius: 30px;
+            border: 3px solid #ff9999;
+            max-width: 45%;
+            height: auto;
+        }
+
+        /* list styling */
+        .love-list {
+            text-align: left;
+            font-size: 1.2rem;
+            line-height: 1.8;
+            color: #a64d4d;
+            font-weight: 600;
+            padding: 0.5rem 1rem;
+        }
+
+        .love-list p {
+            margin: 0.5rem 0;
+        }
+
+        .center-gif {
+            max-width: 100%;
+            border-radius: 30px;
+        }
+
+        iframe {
+            border: none;
+            width: 100%;
+            height: 250px;
+            border-radius: 20px;
+        }
+
+        /* small adjustments */
+        h2, h3 {
+            color: #b30000;
+        }
+
+        .sub-text {
+            font-size: 1.8rem;
+            margin-top: 1rem;
+            color: #b3004d;
+        }
+    </style>
+</head>
+<body>
+<div class="pages">
+    <!-- PAGE 1 -->
+    <div class="page active" id="page1">
+        <div class="hearts-row">
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+        </div>
+        <div class="page-content slide-up" id="page1Content">
+            <div class="red-box" style="max-width: 650px;">
+                <div class="draw-text" style="font-size: 2.2rem; font-weight: bold; color: #b30000;">
+                    Happy valentine day<br>my love and my everything
+                </div>
+            </div>
+        </div>
+        <!-- cursed white cross -->
+        <div class="cursed-cross next-button" data-next="2">
+            <span class="cross-symbol">✝</span>
+            <span style="font-size:2rem;">💌</span>
+            <span style="font-size:2rem;">❤️</span>
+            <span class="press-text">press me</span>
+        </div>
+    </div>
+
+    <!-- PAGE 2 -->
+    <div class="page" id="page2">
+        <div class="hearts-row">
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+        </div>
+        <div class="page-content" id="page2Content">
+            <div class="gif-side">
+                <!-- mocha and milk bears gif (tenor embed) -->
+                <iframe src="https://tenor.com/embed/7102673578086768359" allowfullscreen></iframe>
+                <!-- besos gif (tenor embed) -->
+                <iframe src="https://tenor.com/embed/6180200097750952521" allowfullscreen></iframe>
+            </div>
+            <!-- red lined box with text -->
+            <div class="red-box draw-animation-box" style="text-align: left;">
+                <div class="love-list draw-text">
+                    <p>💗 Things I really love about youu:</p>
+                    1. I love the shape of your eyes and how they're placed.<br>
+                    2. I love your smile.<br>
+                    3. I love your jokes and stories it makes me have so much fun.<br>
+                    4. I love your hair and how straight it is.<br>
+                    5. I love the way your voice becomes soft when you talk about something you love.<br>
+                    6. I love how your eyes brighten up when you talk about something you love.<br>
+                    7. 6...7...ANYWAYS I love your humor and how energetic you are.<br>
+                    8. I REALLY LOVE YOUR FACE YOU'RE SO CUTE AND BEAUTIFUL.<br>
+                    9. I love your nose and it's shape.<br>
+                    10. I love everything about you.<br>
+                    <p>I would say 2000 that I love about you, but I don't wanna tire you reading all of this.</p>
+                </div>
+            </div>
+        </div>
+        <div class="cursed-cross next-button" data-next="3">
+            <span class="cross-symbol">✝</span>
+            <span style="font-size:2rem;">💌</span>
+            <span style="font-size:2rem;">❤️</span>
+            <span class="press-text">press me</span>
+        </div>
+    </div>
+
+    <!-- PAGE 3 : horimiya + me and you forever -->
+    <div class="page" id="page3">
+        <div class="hearts-row">
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+        </div>
+        <div class="page-content" id="page3Content">
+            <div class="red-box">
+                <!-- horimiya gif embed -->
+                <iframe src="https://tenor.com/embed/6944457256172224561" style="height:300px;"></iframe>
+            </div>
+            <h2 class="sub-text draw-text" style="font-size: 2.5rem;">me and you, Forever</h2>
+        </div>
+        <div class="cursed-cross next-button" data-next="4">
+            <span class="cross-symbol">✝</span>
+            <span style="font-size:2rem;">💌</span>
+            <span style="font-size:2rem;">❤️</span>
+            <span class="press-text">press me</span>
+        </div>
+    </div>
+
+    <!-- PAGE 4 : flowers (INSERT YOUR OWN IMAGE HERE) -->
+    <div class="page" id="page4">
+        <div class="hearts-row">
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+        </div>
+        <div class="page-content" id="page4Content">
+            <div class="red-box">
+                <!-- ===== INSERT YOUR FLOWERS PICTURE HERE ===== -->
+                <!-- Replace the src value with your own image URL or file path -->
+                <img src="IMG_2711.jpg" alt="Flowers for you" style="max-width:100%; border-radius:20px;">
+                <!-- Example: src="flowers.jpg" if the image is in the same folder -->
+            </div>
+            <h2 class="sub-text draw-text" style="font-size: 2.5rem;">Flowers for you my beloved</h2>
+        </div>
+        <div class="cursed-cross next-button" data-next="5">
+            <span class="cross-symbol">✝</span>
+            <span style="font-size:2rem;">💌</span>
+            <span style="font-size:2rem;">❤️</span>
+            <span class="press-text">press me</span>
+        </div>
+    </div>
+
+    <!-- PAGE 5 : last page, empty paragraph, big box, I love you light red -->
+    <div class="page" id="page5">
+        <div class="hearts-row">
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+            <span class="heart-outline">♡</span>
+        </div>
+        <div class="page-content" id="page5Content">
+            <div class="red-box big-box">
+                <!-- empty paragraph for now (you can fill later) -->
+                <p style="font-size: 1.6rem; color: #b3004d; min-height: 200px; display: flex; align-items: center; justify-content: center;">✨  your special message  ✨</p>
+            </div>
+        </div>
+        <!-- I love you in light red (instead of cross) -->
+        <div class="iloveyou-light">
+            I love you
+        </div>
+    </div>
+</div>
+
+<script>
+    (function() {
+        let currentPage = 1; // page1 active
+        const pages = document.querySelectorAll('.page');
+        const totalPages = pages.length;
+
+        // function to show page by number, with slide-up + draw animation on content
+        function showPage(pageNumber) {
+            // hide all pages
+            pages.forEach(p => p.classList.remove('active'));
+
+            const activePage = document.getElementById(`page${pageNumber}`);
+            if (!activePage) return;
+
+            activePage.classList.add('active');
+
+            // apply slide-up and draw animation to page-content inside active page
+            const contentDiv = activePage.querySelector('.page-content');
+            if (contentDiv) {
+                // remove previous animation to restart
+                contentDiv.classList.remove('slide-up');
+                void contentDiv.offsetWidth; // reflow
+                contentDiv.classList.add('slide-up');
+            }
+
+            // additionally, apply draw-text to any .draw-text inside this page
+            const drawElements = activePage.querySelectorAll('.draw-text');
+            drawElements.forEach(el => {
+                el.classList.remove('draw-text');
+                void el.offsetWidth;
+                el.classList.add('draw-text');
+            });
+        }
+
+        // event listeners for all .next-button
+        document.querySelectorAll('.next-button').forEach(btn => {
+            btn.addEventListener('click', function(e) {
+                e.stopPropagation();
+                const nextPage = this.getAttribute('data-next');
+                if (nextPage) {
+                    const nextNum = parseInt(nextPage);
+                    if (nextNum >= 1 && nextNum <= totalPages) {
+                        showPage(nextNum);
+                    }
+                }
+            });
+        });
+
+        // ensure page1 content gets draw animation initially (since active)
+        window.addEventListener('load', () => {
+            // force draw on page1 texts
+            const page1Draw = document.querySelectorAll('#page1 .draw-text');
+            page1Draw.forEach(el => {
+                el.classList.add('draw-text');
+            });
+            // slide up for page1
+            const page1Content = document.getElementById('page1Content');
+            if(page1Content) page1Content.classList.add('slide-up');
+        });
+    })();
+</script>
+</body>
+</html>
