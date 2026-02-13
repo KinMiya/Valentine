@@ -3,25 +3,125 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>happy valentine · my love</title>
+    <title>valentine · press & hold · secret dog</title>
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            font-family: 'Segoe UI', 'Comic Neue', cursive, sans-serif;
+            font-family: 'Segoe UI', 'Comic Neue', 'Patrick Hand', cursive, sans-serif;
         }
 
         body {
             overflow: hidden;
-            background-color: #ffdddd; /* light red base */
+            background-color: #ffdddd;
         }
 
-        /* pages container */
+        /* ========== BACKGROUND TEXTURE ========== */
+        .bg-texture {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 0;
+            background-color: #ffdddd;
+            background-image: 
+                radial-gradient(circle at 20px 30px, rgba(255, 120, 120, 0.15) 4px, transparent 4px),
+                radial-gradient(circle at 60px 80px, rgba(255, 80, 80, 0.1) 6px, transparent 6px),
+                radial-gradient(circle at 120px 140px, rgba(255, 150, 150, 0.2) 8px, transparent 8px),
+                repeating-linear-gradient(45deg, rgba(255, 200, 200, 0.2) 0px, rgba(255, 200, 200, 0.2) 10px, transparent 10px, transparent 20px);
+            background-size: 150px 150px, 200px 200px, 300px 300px, 40px 40px;
+        }
+
+        /* floating sparkles */
+        .float-heart {
+            position: fixed;
+            font-size: 1.8rem;
+            opacity: 0.5;
+            color: #ffb3b3;
+            pointer-events: none;
+            z-index: 1;
+            animation: floatAround 12s infinite ease-in-out;
+            filter: drop-shadow(0 0 3px #ff8888);
+        }
+        @keyframes floatAround {
+            0% { transform: translate(0, 0) rotate(0deg); }
+            33% { transform: translate(20px, -30px) rotate(10deg); }
+            66% { transform: translate(-15px, 20px) rotate(-8deg); }
+            100% { transform: translate(0, 0) rotate(0deg); }
+        }
+        .sparkle {
+            position: fixed;
+            font-size: 1.2rem;
+            opacity: 0.6;
+            color: #ffe0e0;
+            pointer-events: none;
+            z-index: 1;
+            animation: sparkleTwinkle 3s infinite alternate;
+        }
+        @keyframes sparkleTwinkle {
+            0% { opacity: 0.2; transform: scale(0.8); }
+            100% { opacity: 0.9; transform: scale(1.3); }
+        }
+
+        /* heart rain (permanent) */
+        .heart-rain {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            z-index: 2;
+            overflow: hidden;
+        }
+        .heart-drop {
+            position: absolute;
+            font-size: 1.5rem;
+            color: #ffaaaa;
+            opacity: 0.6;
+            animation: fall linear infinite;
+            filter: drop-shadow(0 0 3px #ff4d4d);
+        }
+        @keyframes fall {
+            0% { transform: translateY(-10vh) rotate(0deg); opacity: 0.8; }
+            100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
+        }
+
+        /* love counter */
+        .love-counter {
+            position: fixed;
+            top: 20px;
+            left: 20px;
+            background: rgba(255, 220, 220, 0.7);
+            backdrop-filter: blur(3px);
+            border: 2px solid #ffb3b3;
+            border-radius: 40px;
+            padding: 8px 18px;
+            font-size: 1.6rem;
+            color: #b3004d;
+            box-shadow: 0 4px 10px rgba(200,0,0,0.2);
+            z-index: 200;
+            font-weight: bold;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+            transform: rotate(-2deg);
+            animation: counterGlow 2s infinite alternate;
+        }
+        @keyframes counterGlow {
+            from { box-shadow: 0 4px 10px rgba(255, 100, 100, 0.3); }
+            to { box-shadow: 0 4px 20px #ff8080; }
+        }
+
+        /* page container */
         .pages {
             position: relative;
             width: 100vw;
             height: 100vh;
+            z-index: 10;
         }
 
         .page {
@@ -30,21 +130,22 @@
             left: 0;
             width: 100%;
             height: 100%;
-            background-color: #ffdddd; /* light red */
+            background-color: transparent;
             opacity: 0;
             visibility: hidden;
             transition: opacity 0.4s ease;
             overflow-y: auto;
             padding: 1rem 2rem 4rem 2rem;
+            z-index: 15;
         }
 
         .page.active {
             opacity: 1;
             visibility: visible;
-            z-index: 10;
+            z-index: 25;
         }
 
-        /* hearts hanging from above (7 outline hearts) */
+        /* hearts row */
         .hearts-row {
             display: flex;
             justify-content: center;
@@ -52,40 +153,46 @@
             margin-top: 0.5rem;
             margin-bottom: 1rem;
             flex-wrap: wrap;
+            position: relative;
+            z-index: 30;
         }
-
         .heart-outline {
-            font-size: 2.8rem;
+            font-size: 3rem;
             line-height: 1;
-            color: #ff4d4d; /* red */
-            text-shadow: 0 0 2px #b30000;
-            transform: rotate(0deg);
+            color: #ff4d4d;
+            text-shadow: 0 0 4px #ffb3b3, 2px 4px 6px rgba(200,0,0,0.2);
             animation: sway 3s infinite ease-in-out;
             display: inline-block;
+            position: relative;
         }
-
+        .heart-outline::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            left: 50%;
+            width: 2px;
+            height: 30px;
+            background: linear-gradient(to bottom, #ffaaaa, transparent);
+            transform: translateX(-50%);
+        }
         @keyframes sway {
             0% { transform: rotate(-5deg); }
             50% { transform: rotate(5deg); }
             100% { transform: rotate(-5deg); }
         }
 
-        /* slide up animation for page content */
+        /* slide up & draw */
         .slide-up {
             animation: slideUp 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
         }
-
         @keyframes slideUp {
             0% { opacity: 0; transform: translateY(40px); }
             100% { opacity: 1; transform: translateY(0); }
         }
-
-        /* drawing animation for text (cute sketchy effect) */
         .draw-text {
             animation: draw 2s ease-out forwards;
-            display: inline-block; /* for shadow */
+            display: inline-block;
         }
-
         @keyframes draw {
             0% { text-shadow: 0 0 0 #ff8888, 0 0 0 #ff8888, 0 0 0 #ff8888; opacity: 0.2; letter-spacing: 5px; }
             30% { text-shadow: 2px 2px 0 #ffa0a0, -1px -1px 0 #ffbebe; opacity: 0.8; }
@@ -93,16 +200,29 @@
             100% { text-shadow: 0 0 0 transparent; opacity: 1; letter-spacing: normal; }
         }
 
-        /* red lined square / box */
+        /* red box with bow */
         .red-box {
             border: 3px solid #ff4d4d;
-            background-color: rgba(255, 200, 200, 0.3);
-            padding: 1.5rem 2rem;
-            border-radius: 20px;
-            box-shadow: 0 0 0 2px #ffb3b3 inset, 0 0 0 3px #ff4d4d;
+            background-color: rgba(255, 240, 240, 0.7);
+            backdrop-filter: blur(2px);
+            padding: 1.8rem 2.2rem;
+            border-radius: 30px 20px 30px 20px;
+            box-shadow: 0 0 0 3px #ffb3b3 inset, 0 0 0 5px #ff4d4d, 10px 10px 20px rgba(200, 80, 80, 0.2);
             max-width: 700px;
             margin: 1rem auto;
             text-align: center;
+            position: relative;
+        }
+        .red-box::before {
+            content: "🎀";
+            position: absolute;
+            top: -25px;
+            left: 50%;
+            transform: translateX(-50%) rotate(-5deg);
+            font-size: 2.5rem;
+            filter: drop-shadow(0 6px 4px #ffaaaa);
+            z-index: 35;
+            pointer-events: none;
         }
 
         .big-box {
@@ -111,7 +231,7 @@
             padding: 2.5rem;
         }
 
-        /* cursed white cross + letter (bottom right) */
+        /* cursed cross */
         .cursed-cross {
             position: fixed;
             bottom: 20px;
@@ -124,59 +244,64 @@
             display: flex;
             align-items: center;
             gap: 10px;
-            box-shadow: 0 0 0 3px white, 0 0 0 5px #ffb3b3;
+            box-shadow: 0 0 0 3px white, 0 0 0 5px #ffb3b3, 0 8px 0 #b3b3b3;
             cursor: pointer;
             z-index: 100;
             transition: 0.2s;
             animation: cursedShake 2.5s infinite;
             line-height: 1;
+            border: 2px solid #ffa0a0;
         }
-
         .cursed-cross:hover {
-            transform: scale(1.05);
+            transform: scale(1.05) translateY(-3px);
             background-color: #ffe4e4;
+            box-shadow: 0 0 0 3px white, 0 0 0 5px #ff8080, 0 5px 0 #b3b3b3;
         }
-
         @keyframes cursedShake {
             0%, 100% { transform: rotate(0deg); }
             10%, 30%, 50% { transform: rotate(-3deg); }
             20%, 40% { transform: rotate(3deg); }
         }
 
-        .cross-symbol {
-            font-size: 2.2rem;
-            color: white;
-            filter: drop-shadow(0 0 3px #b30000);
-        }
-
-        .press-text {
-            font-size: 1.2rem;
-            font-weight: bold;
-            color: #b30000;
-            background: white;
-            padding: 0.2rem 0.6rem;
-            border-radius: 30px;
-        }
-
-        /* i love you in light red (last page) */
+        /* I love you light red (last page) */
         .iloveyou-light {
             position: fixed;
             bottom: 30px;
             right: 30px;
             font-size: 2.5rem;
             font-weight: bold;
-            color: #ffb3b3; /* light red */
+            color: #ffb3b3;
             text-shadow: 0 0 3px #ff4d4d, 0 0 8px white;
             letter-spacing: 3px;
-            background-color: rgba(255, 220, 220, 0.4);
+            background-color: rgba(255, 220, 220, 0.5);
             padding: 10px 20px;
             border-radius: 50px;
             border: 2px dashed #ffa0a0;
             transform: rotate(-2deg);
             z-index: 100;
+            backdrop-filter: blur(2px);
+            cursor: default;
         }
 
-        /* page content wrapper */
+        /* stamp */
+        .stamp {
+            position: absolute;
+            bottom: 10px;
+            left: 10px;
+            font-size: 1.2rem;
+            background: rgba(255, 220, 220, 0.7);
+            padding: 0.2rem 0.8rem;
+            border-radius: 30px;
+            border: 2px dashed #ff8080;
+            color: #b3004d;
+            transform: rotate(-5deg);
+            font-weight: bold;
+            box-shadow: 2px 2px 0 #ffb3b3;
+            pointer-events: none;
+            z-index: 20;
+        }
+
+        /* page content */
         .page-content {
             display: flex;
             flex-direction: column;
@@ -184,9 +309,10 @@
             justify-content: center;
             min-height: 70vh;
             width: 100%;
+            position: relative;
+            z-index: 40;
         }
 
-        /* gif side by side (page2) */
         .gif-side {
             display: flex;
             justify-content: space-between;
@@ -196,33 +322,27 @@
             max-width: 1000px;
             margin: 1rem auto;
         }
-
         .gif-side iframe, .gif-side img {
             border-radius: 30px;
             border: 3px solid #ff9999;
             max-width: 45%;
             height: auto;
+            box-shadow: 8px 8px 0 #ffb3b3;
         }
 
-        /* list styling */
+        /* love list styling – now with numbered items */
         .love-list {
             text-align: left;
-            font-size: 1.2rem;
+            font-size: 1.1rem;
             line-height: 1.8;
             color: #a64d4d;
             font-weight: 600;
             padding: 0.5rem 1rem;
         }
-
-        .love-list p {
-            margin: 0.5rem 0;
+        .love-list span {
+            display: block;
+            margin-bottom: 0.3rem;
         }
-
-        .center-gif {
-            max-width: 100%;
-            border-radius: 30px;
-        }
-
         iframe {
             border: none;
             width: 100%;
@@ -230,229 +350,410 @@
             border-radius: 20px;
         }
 
-        /* small adjustments */
-        h2, h3 {
-            color: #b30000;
-        }
-
         .sub-text {
-            font-size: 1.8rem;
+            font-size: 2rem;
             margin-top: 1rem;
             color: #b3004d;
+            text-shadow: 2px 2px 0 #ffb3b3;
+            background: rgba(255, 255, 255, 0.4);
+            padding: 0.5rem 1.5rem;
+            border-radius: 40px;
+            backdrop-filter: blur(2px);
+        }
+
+        /* ========== NEW INTERACTIVE ELEMENTS ========== */
+
+        /* --- press & hold heart (page5) --- */
+        .hold-heart-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+        .hold-message {
+            font-size: 2rem;
+            color: #b3004d;
+            text-shadow: 0 0 5px #ffb3b3;
+        }
+        .press-heart {
+            font-size: 8rem;
+            cursor: pointer;
+            user-select: none;
+            transition: transform 0.2s;
+            filter: drop-shadow(0 10px 8px #ff8888);
+            position: relative;
+        }
+        .press-heart:active {
+            transform: scale(0.95);
+        }
+        .heart-fill-bar {
+            width: 200px;
+            height: 30px;
+            background-color: #ffcccc;
+            border: 3px solid #ff4d4d;
+            border-radius: 30px;
+            overflow: hidden;
+            margin-top: 10px;
+        }
+        .fill-progress {
+            height: 100%;
+            width: 0%;
+            background-color: #ff4d4d;
+            transition: width 0.1s linear;
+        }
+        .glow-pink {
+            box-shadow: 0 0 40px #ffa0a0, 0 0 80px #ffb3b3;
+            transition: box-shadow 0.2s;
+        }
+
+        /* --- secret dog on page4 --- */
+        .dog-container {
+            position: fixed;
+            bottom: 30px;
+            left: 20px;
+            z-index: 200;
+            cursor: pointer;
+            filter: drop-shadow(0 10px 8px rgba(0,0,0,0.1));
+            transition: transform 0.3s;
+        }
+        .dog-container:hover {
+            transform: scale(1.05);
+        }
+        .dog-emoji {
+            font-size: 4rem;
+            display: inline-block;
+            animation: blink 3s infinite, breathe 2s infinite ease-in-out;
+            transform-origin: bottom;
+        }
+        @keyframes blink {
+            0%, 48%, 52%, 100% { transform: scaleY(1); }
+            50% { transform: scaleY(0.1); } /* blink */
+        }
+        @keyframes breathe {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-5px); }
+        }
+        .dog-smile {
+            display: none;
+            font-size: 2rem;
+            margin-left: 5px;
+        }
+        .dog-container.clicked .dog-emoji {
+            animation: none;
+            transform: scale(1);
+        }
+        .dog-container.clicked .dog-smile {
+            display: inline-block;
+        }
+
+        /* --- heart shower (last page) --- */
+        .click-heart-shower {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            z-index: 300;
+            pointer-events: none;
+        }
+        .shower-heart {
+            position: absolute;
+            font-size: 2rem;
+            color: #ff4d4d;
+            animation: floatUpFade 2s forwards;
+            pointer-events: none;
+        }
+        @keyframes floatUpFade {
+            0% { opacity: 1; transform: translate(0, 0) scale(1); }
+            100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.5); }
+        }
+
+        /* --- secret page (page7) with smooth fade transition --- */
+        .secret-note {
+            transition: opacity 1s ease;
+            font-size: 2rem;
+            color: #b3004d;
+            text-align: center;
+            margin: 2rem;
+        }
+        #secretNote2 {
+            opacity: 0;
+            pointer-events: none;
+        }
+        .fade-out {
+            animation: fadeOut 7s forwards;
+        }
+        @keyframes fadeOut {
+            0% { opacity: 1; }
+            90% { opacity: 1; }
+            100% { opacity: 0; }
         }
     </style>
 </head>
 <body>
-<div class="pages">
-    <!-- PAGE 1 -->
-    <div class="page active" id="page1">
-        <div class="hearts-row">
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
+    <div class="bg-texture"></div>
+    <div class="heart-rain" id="heartRain"></div>
+    <div class="love-counter">❤️ 143</div>
+    <!-- floating sparkles -->
+    <div class="float-heart" style="top: 15%; left: 8%;">🌸</div>
+    <div class="float-heart" style="top: 75%; left: 85%;">💘</div>
+    <div class="float-heart" style="top: 30%; left: 20%;">✨</div>
+    <div class="sparkle" style="top: 10%; left: 60%;">★</div>
+
+    <!-- pages container -->
+    <div class="pages">
+        <!-- PAGE 1 -->
+        <div class="page active" id="page1">
+            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="page-content" id="page1Content">
+                <div class="red-box">
+                    <div class="draw-text" style="font-size:2.2rem;">Happy valentine day<br>my love and my everything</div>
+                </div>
+            </div>
+            <div class="cursed-cross next-button" data-next="2">✝💌❤️<span class="press-text">press me</span></div>
         </div>
-        <div class="page-content slide-up" id="page1Content">
-            <div class="red-box" style="max-width: 650px;">
-                <div class="draw-text" style="font-size: 2.2rem; font-weight: bold; color: #b30000;">
-                    Happy valentine day<br>my love and my everything
+
+        <!-- PAGE 2 – updated love list -->
+        <div class="page" id="page2">
+            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="page-content" id="page2Content">
+                <div class="gif-side">
+                    <iframe src="https://tenor.com/embed/7102673578086768359"></iframe>
+                    <iframe src="https://tenor.com/embed/6180200097750952521"></iframe>
+                </div>
+                <div class="red-box" style="text-align:left;">
+                    <div class="love-list draw-text">
+                        <span>💗 1. I love the shape of your eyes and how they're placed.</span>
+                        <span>💗 2. I love your smile.</span>
+                        <span>💗 3. I love your jokes and stories it makes me have so much fun.</span>
+                        <span>💗 4. I love your hair and how straight it is.</span>
+                        <span>💗 5. I love the way your voice becomes soft when you talk about something you love.</span>
+                        <span>💗 6. I love how your eyes brighten up when you talk about something you love.</span>
+                        <span>💗 7. 6...7...ANYWAYS I love your humor and how energetic you are.</span>
+                        <span>💗 8. I REALLY LOVE YOUR FACE YOU'RE SO CUTE AND BEAUTIFUL.</span>
+                        <span>💗 9. I love your nose and it's shape.</span>
+                        <span>💗 10. I love everything about you.</span>
+                        <span style="margin-top:0.8rem;">(I would say 2000 things that I love about you, but I don't wanna tire you reading all of this)</span>
+                    </div>
+                </div>
+            </div>
+            <div class="cursed-cross next-button" data-next="3">✝💌❤️<span class="press-text">press me</span></div>
+        </div>
+
+        <!-- PAGE 3 (horimiya) -->
+        <div class="page" id="page3">
+            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="page-content" id="page3Content">
+                <div class="red-box"><iframe src="https://tenor.com/embed/6944457256172224561" style="height:300px;"></iframe></div>
+                <h2 class="sub-text draw-text">me and you, Forever</h2>
+            </div>
+            <div class="cursed-cross next-button" data-next="4">✝💌❤️<span class="press-text">press me</span></div>
+        </div>
+
+        <!-- PAGE 4 (flowers + DOG) -->
+        <div class="page" id="page4">
+            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="page-content" id="page4Content">
+                <div class="red-box">
+                    <img src="IMG_2711.jpg" style="max-width:100%; border-radius:20px;">
+                </div>
+                <h2 class="sub-text draw-text">Flowers for you my beloved</h2>
+            </div>
+            <!-- secret dog (clickable) -->
+            <div class="dog-container" id="secretDog">
+                <span class="dog-emoji">🐕</span>
+                <span class="dog-smile">😊</span>
+            </div>
+            <!-- cross now goes to page5 (hold heart) -->
+            <div class="cursed-cross next-button" data-next="5">✝💌❤️<span class="press-text">press me</span></div>
+        </div>
+
+        <!-- PAGE 5 (press and hold heart) -->
+        <div class="page" id="page5">
+            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="page-content" id="page5Content">
+                <div class="hold-heart-container">
+                    <div class="hold-message">Hold the heart if you love me</div>
+                    <div class="press-heart" id="holdHeart">❤️</div>
+                    <div class="heart-fill-bar">
+                        <div class="fill-progress" id="heartFill"></div>
+                    </div>
                 </div>
             </div>
         </div>
-        <!-- cursed white cross -->
-        <div class="cursed-cross next-button" data-next="2">
-            <span class="cross-symbol">✝</span>
-            <span style="font-size:2rem;">💌</span>
-            <span style="font-size:2rem;">❤️</span>
-            <span class="press-text">press me</span>
-        </div>
-    </div>
 
-    <!-- PAGE 2 -->
-    <div class="page" id="page2">
-        <div class="hearts-row">
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-        </div>
-        <div class="page-content" id="page2Content">
-            <div class="gif-side">
-                <!-- mocha and milk bears gif (tenor embed) -->
-                <iframe src="https://tenor.com/embed/7102673578086768359" allowfullscreen></iframe>
-                <!-- besos gif (tenor embed) -->
-                <iframe src="https://tenor.com/embed/6180200097750952521" allowfullscreen></iframe>
+        <!-- PAGE 6 (last page with paragraph, I love you, click shower) -->
+        <div class="page" id="page6">
+            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="page-content" id="page6Content">
+                <div class="red-box big-box">
+                    <p style="font-size:1.8rem; color:#b3004d;">✨ your special message ✨</p>
+                </div>
+                <div class="stamp" style="bottom:80px; left:30px;">always yours</div>
             </div>
-            <!-- red lined box with text -->
-            <div class="red-box draw-animation-box" style="text-align: left;">
-                <div class="love-list draw-text">
-                    <p>💗 Things I really love about youu:</p>
-                    1. I love the shape of your eyes and how they're placed.<br>
-                    2. I love your smile.<br>
-                    3. I love your jokes and stories it makes me have so much fun.<br>
-                    4. I love your hair and how straight it is.<br>
-                    5. I love the way your voice becomes soft when you talk about something you love.<br>
-                    6. I love how your eyes brighten up when you talk about something you love.<br>
-                    7. 6...7...ANYWAYS I love your humor and how energetic you are.<br>
-                    8. I REALLY LOVE YOUR FACE YOU'RE SO CUTE AND BEAUTIFUL.<br>
-                    9. I love your nose and it's shape.<br>
-                    10. I love everything about you.<br>
-                    <p>I would say 2000 that I love about you, but I don't wanna tire you reading all of this.</p>
+            <div class="iloveyou-light">I love you</div>
+            <!-- container for shower hearts -->
+            <div class="click-heart-shower" id="heartShower"></div>
+        </div>
+
+        <!-- PAGE 7 (secret page) with smooth fade for second note -->
+        <div class="page" id="page7">
+            <div class="hearts-row"><!-- 7 hearts --></div>
+            <div class="page-content" id="page7Content">
+                <div class="secret-note" id="secretNote1">You found the hidden love note.</div>
+                <!-- second note starts invisible (opacity 0) - will fade in after 7s -->
+                <div class="secret-note" id="secretNote2" style="opacity:0; pointer-events:none;">
+                    <iframe src="https://tenor.com/embed/2650058413365222923" style="height:200px;"></iframe>
+                    <p>its nothing, I just wanted to tell you that your smile is the prettiest smile ever</p>
                 </div>
             </div>
-        </div>
-        <div class="cursed-cross next-button" data-next="3">
-            <span class="cross-symbol">✝</span>
-            <span style="font-size:2rem;">💌</span>
-            <span style="font-size:2rem;">❤️</span>
-            <span class="press-text">press me</span>
+            <!-- cross to go back to page4 -->
+            <div class="cursed-cross next-button" data-next="4">✝💌❤️<span class="press-text">back</span></div>
         </div>
     </div>
 
-    <!-- PAGE 3 : horimiya + me and you forever -->
-    <div class="page" id="page3">
-        <div class="hearts-row">
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-        </div>
-        <div class="page-content" id="page3Content">
-            <div class="red-box">
-                <!-- horimiya gif embed -->
-                <iframe src="https://tenor.com/embed/6944457256172224561" style="height:300px;"></iframe>
-            </div>
-            <h2 class="sub-text draw-text" style="font-size: 2.5rem;">me and you, Forever</h2>
-        </div>
-        <div class="cursed-cross next-button" data-next="4">
-            <span class="cross-symbol">✝</span>
-            <span style="font-size:2rem;">💌</span>
-            <span style="font-size:2rem;">❤️</span>
-            <span class="press-text">press me</span>
-        </div>
-    </div>
-
-    <!-- PAGE 4 : flowers (INSERT YOUR OWN IMAGE HERE) -->
-    <div class="page" id="page4">
-        <div class="hearts-row">
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-        </div>
-        <div class="page-content" id="page4Content">
-            <div class="red-box">
-                <!-- ===== INSERT YOUR FLOWERS PICTURE HERE ===== -->
-                <!-- Replace the src value with your own image URL or file path -->
-                <img src="IMG_2711.jpg" alt="Flowers for you" style="max-width:100%; border-radius:20px;">
-                <!-- Example: src="flowers.jpg" if the image is in the same folder -->
-            </div>
-            <h2 class="sub-text draw-text" style="font-size: 2.5rem;">Flowers for you my beloved</h2>
-        </div>
-        <div class="cursed-cross next-button" data-next="5">
-            <span class="cross-symbol">✝</span>
-            <span style="font-size:2rem;">💌</span>
-            <span style="font-size:2rem;">❤️</span>
-            <span class="press-text">press me</span>
-        </div>
-    </div>
-
-    <!-- PAGE 5 : last page, empty paragraph, big box, I love you light red -->
-    <div class="page" id="page5">
-        <div class="hearts-row">
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-            <span class="heart-outline">♡</span>
-        </div>
-        <div class="page-content" id="page5Content">
-            <div class="red-box big-box">
-                <!-- empty paragraph for now (you can fill later) -->
-                <p style="font-size: 1.6rem; color: #b3004d; min-height: 200px; display: flex; align-items: center; justify-content: center;">✨  your special message  ✨</p>
-            </div>
-        </div>
-        <!-- I love you in light red (instead of cross) -->
-        <div class="iloveyou-light">
-            I love you
-        </div>
-    </div>
-</div>
-
-<script>
-    (function() {
-        let currentPage = 1; // page1 active
-        const pages = document.querySelectorAll('.page');
-        const totalPages = pages.length;
-
-        // function to show page by number, with slide-up + draw animation on content
-        function showPage(pageNumber) {
-            // hide all pages
-            pages.forEach(p => p.classList.remove('active'));
-
-            const activePage = document.getElementById(`page${pageNumber}`);
-            if (!activePage) return;
-
-            activePage.classList.add('active');
-
-            // apply slide-up and draw animation to page-content inside active page
-            const contentDiv = activePage.querySelector('.page-content');
-            if (contentDiv) {
-                // remove previous animation to restart
-                contentDiv.classList.remove('slide-up');
-                void contentDiv.offsetWidth; // reflow
-                contentDiv.classList.add('slide-up');
+    <script>
+        (function() {
+            // heart rain generator
+            const rainContainer = document.getElementById('heartRain');
+            const hearts = ['❤️','🧡','💛','💚','💙','💜','🤍','💖','💗','💘','💝'];
+            for (let i=0; i<30; i++) {
+                let d = document.createElement('div');
+                d.className = 'heart-drop';
+                d.style.left = Math.random()*100+'%';
+                d.style.animationDuration = (Math.random()*4+4)+'s';
+                d.style.animationDelay = Math.random()*5+'s';
+                d.style.fontSize = (Math.random()*1.5+1)+'rem';
+                d.innerHTML = hearts[Math.floor(Math.random()*hearts.length)];
+                rainContainer.appendChild(d);
             }
 
-            // additionally, apply draw-text to any .draw-text inside this page
-            const drawElements = activePage.querySelectorAll('.draw-text');
-            drawElements.forEach(el => {
-                el.classList.remove('draw-text');
-                void el.offsetWidth;
-                el.classList.add('draw-text');
-            });
-        }
-
-        // event listeners for all .next-button
-        document.querySelectorAll('.next-button').forEach(btn => {
-            btn.addEventListener('click', function(e) {
-                e.stopPropagation();
-                const nextPage = this.getAttribute('data-next');
-                if (nextPage) {
-                    const nextNum = parseInt(nextPage);
-                    if (nextNum >= 1 && nextNum <= totalPages) {
-                        showPage(nextNum);
-                    }
+            // page navigation
+            const pages = document.querySelectorAll('.page');
+            function showPage(num) {
+                pages.forEach(p => p.classList.remove('active'));
+                const target = document.getElementById(`page${num}`);
+                if (target) target.classList.add('active');
+                // slide-up and draw
+                const content = target?.querySelector('.page-content');
+                if (content) {
+                    content.classList.remove('slide-up');
+                    void content.offsetWidth;
+                    content.classList.add('slide-up');
                 }
-            });
-        });
+                target?.querySelectorAll('.draw-text').forEach(el => {
+                    el.classList.remove('draw-text');
+                    void el.offsetWidth;
+                    el.classList.add('draw-text');
+                });
+            }
 
-        // ensure page1 content gets draw animation initially (since active)
-        window.addEventListener('load', () => {
-            // force draw on page1 texts
-            const page1Draw = document.querySelectorAll('#page1 .draw-text');
-            page1Draw.forEach(el => {
-                el.classList.add('draw-text');
+            document.querySelectorAll('.next-button').forEach(btn => {
+                btn.addEventListener('click', e => {
+                    e.stopPropagation();
+                    let next = btn.getAttribute('data-next');
+                    if (next) showPage(parseInt(next));
+                });
             });
-            // slide up for page1
-            const page1Content = document.getElementById('page1Content');
-            if(page1Content) page1Content.classList.add('slide-up');
-        });
-    })();
-</script>
+
+            // ---- PRESS AND HOLD (page5) ----
+            const holdHeart = document.getElementById('holdHeart');
+            const fillBar = document.getElementById('heartFill');
+            let holdInterval, holdProgress = 0;
+            if (holdHeart) {
+                holdHeart.addEventListener('mousedown', startHold);
+                holdHeart.addEventListener('touchstart', startHold);
+                function startHold(e) {
+                    e.preventDefault();
+                    holdProgress = 0;
+                    fillBar.style.width = '0%';
+                    // glow
+                    document.getElementById('page5').classList.add('glow-pink');
+                    holdInterval = setInterval(() => {
+                        holdProgress += 2; // fill in ~1.5 sec (50 * 30ms)
+                        fillBar.style.width = Math.min(holdProgress, 100) + '%';
+                        if (holdProgress >= 100) {
+                            clearInterval(holdInterval);
+                            // confetti hearts
+                            for (let i=0; i<30; i++) {
+                                setTimeout(() => {
+                                    let heart = document.createElement('div');
+                                    heart.className = 'shower-heart';
+                                    heart.style.left = Math.random()*100+'%';
+                                    heart.style.top = Math.random()*100+'%';
+                                    heart.style.setProperty('--dx', (Math.random()-0.5)*200+'px');
+                                    heart.style.setProperty('--dy', (Math.random()-0.5)*200+'px');
+                                    heart.innerHTML = '❤️';
+                                    document.getElementById('heartShower').appendChild(heart);
+                                    setTimeout(() => heart.remove(), 2000);
+                                }, i*30);
+                            }
+                            // go to page6
+                            setTimeout(() => {
+                                showPage(6);
+                                document.getElementById('page5').classList.remove('glow-pink');
+                            }, 500);
+                        }
+                    }, 20);
+                }
+                window.addEventListener('mouseup', cancelHold);
+                window.addEventListener('touchend', cancelHold);
+                function cancelHold() {
+                    clearInterval(holdInterval);
+                    document.getElementById('page5').classList.remove('glow-pink');
+                }
+            }
+
+            // ---- CLICK ANYWHERE HEART SHOWER (page6) ----
+            const page6 = document.getElementById('page6');
+            const showerContainer = document.getElementById('heartShower');
+            page6.addEventListener('click', function(e) {
+                for (let i=0; i<15; i++) {
+                    setTimeout(() => {
+                        let heart = document.createElement('div');
+                        heart.className = 'shower-heart';
+                        heart.style.left = (e.clientX - 20 + (Math.random()-0.5)*100) + 'px';
+                        heart.style.top = (e.clientY - 20 + (Math.random()-0.5)*100) + 'px';
+                        let dx = (Math.random()-0.5)*300;
+                        let dy = (Math.random()-0.5)*300 - 100; // upward bias
+                        heart.style.setProperty('--dx', dx+'px');
+                        heart.style.setProperty('--dy', dy+'px');
+                        heart.innerHTML = ['❤️','💖','💗','💘','💝'][Math.floor(Math.random()*5)];
+                        showerContainer.appendChild(heart);
+                        setTimeout(() => heart.remove(), 2000);
+                    }, i*30);
+                }
+                // subtle glow pulse
+                page6.style.transition = 'box-shadow 0.2s';
+                page6.style.boxShadow = 'inset 0 0 50px #ffb3b3';
+                setTimeout(() => page6.style.boxShadow = 'none', 200);
+            });
+
+            // ---- SECRET DOG on page4 with SMOOTH FADE for secret notes ----
+            const dog = document.getElementById('secretDog');
+            dog.addEventListener('click', () => {
+                dog.classList.add('clicked');
+                showPage(7);
+                // After 7 seconds, fade out note1 and fade in note2 smoothly
+                setTimeout(() => {
+                    const note1 = document.getElementById('secretNote1');
+                    const note2 = document.getElementById('secretNote2');
+                    // note1 fades out, note2 fades in
+                    note1.style.transition = 'opacity 1s';
+                    note2.style.transition = 'opacity 1s';
+                    note1.style.opacity = '0';
+                    note1.style.pointerEvents = 'none';
+                    note2.style.opacity = '1';
+                    note2.style.pointerEvents = 'auto';
+                }, 7000); // after 7 sec, start the 1-second fade
+            });
+
+            // initial page1 animations
+            window.addEventListener('load', () => {
+                document.querySelectorAll('#page1 .draw-text').forEach(el => el.classList.add('draw-text'));
+                document.getElementById('page1Content')?.classList.add('slide-up');
+            });
+        })();
+    </script>
 </body>
 </html>
