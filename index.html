@@ -9,7 +9,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            /* iPhone-friendly font stack */
             font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
         }
 
@@ -19,7 +18,6 @@
             touch-action: pan-y pinch-zoom;
         }
 
-        /* ========== BACKGROUND TEXTURE ========== */
         .bg-texture {
             position: fixed;
             top: 0;
@@ -37,7 +35,6 @@
             background-size: 150px 150px, 200px 200px, 300px 300px, 40px 40px;
         }
 
-        /* floating sparkles (some hidden on mobile) */
         .float-heart, .sparkle {
             position: fixed;
             pointer-events: none;
@@ -72,7 +69,6 @@
             }
         }
 
-        /* heart rain (permanent) */
         .heart-rain {
             position: fixed;
             top: 0;
@@ -96,7 +92,6 @@
             100% { transform: translateY(110vh) rotate(360deg); opacity: 0.2; }
         }
 
-        /* love counter */
         .love-counter {
             position: fixed;
             top: 10px;
@@ -122,7 +117,6 @@
             to { box-shadow: 0 4px 20px #ff8080; }
         }
 
-        /* page container */
         .pages {
             position: relative;
             width: 100vw;
@@ -152,7 +146,6 @@
             z-index: 25;
         }
 
-        /* hearts row */
         .hearts-row {
             display: flex;
             justify-content: center;
@@ -160,6 +153,7 @@
             margin-top: 0.5rem;
             margin-bottom: 0.5rem;
             flex-wrap: wrap;
+            position: relative;
             z-index: 30;
         }
         .heart-outline {
@@ -192,7 +186,6 @@
             100% { transform: rotate(-5deg); }
         }
 
-        /* slide up & draw */
         .slide-up {
             animation: slideUp 0.7s cubic-bezier(0.2, 0.9, 0.3, 1) forwards;
         }
@@ -211,7 +204,6 @@
             100% { text-shadow: 0 0 0 transparent; opacity: 1; letter-spacing: normal; }
         }
 
-        /* red box with bow */
         .red-box {
             border: 3px solid #ff4d4d;
             background-color: rgba(255, 240, 240, 0.85);
@@ -242,7 +234,6 @@
             padding: 1.5rem;
         }
 
-        /* cursed cross */
         .cursed-cross {
             position: fixed;
             bottom: 15px;
@@ -290,7 +281,6 @@
             margin-left: 5px;
         }
 
-        /* I love you light red */
         .iloveyou-light {
             position: fixed;
             bottom: 25px;
@@ -311,7 +301,6 @@
             pointer-events: none;
         }
 
-        /* stamp */
         .stamp {
             position: absolute;
             bottom: 10px;
@@ -329,7 +318,6 @@
             z-index: 20;
         }
 
-        /* page content */
         .page-content {
             display: flex;
             flex-direction: column;
@@ -337,6 +325,7 @@
             justify-content: center;
             min-height: 70vh;
             width: 100%;
+            position: relative;
             z-index: 40;
         }
 
@@ -370,7 +359,6 @@
             }
         }
 
-        /* love list */
         .love-list {
             text-align: left;
             font-size: 1rem;
@@ -401,9 +389,6 @@
             text-align: center;
         }
 
-        /* ========== INTERACTIVE ELEMENTS ========== */
-
-        /* press & hold heart */
         .hold-heart-container {
             display: flex;
             flex-direction: column;
@@ -423,6 +408,7 @@
             user-select: none;
             transition: transform 0.2s;
             filter: drop-shadow(0 10px 8px #ff8888);
+            position: relative;
             touch-action: manipulation;
         }
         .press-heart:active {
@@ -449,7 +435,6 @@
             transition: box-shadow 0.2s;
         }
 
-        /* secret dog */
         .dog-container {
             position: fixed;
             bottom: 20px;
@@ -490,7 +475,6 @@
             display: inline-block;
         }
 
-        /* heart shower */
         .click-heart-shower {
             position: absolute;
             top: 0;
@@ -512,7 +496,6 @@
             100% { opacity: 0; transform: translate(var(--dx), var(--dy)) scale(0.5); }
         }
 
-        /* secret page fade */
         .secret-note {
             transition: opacity 1s ease;
             font-size: 1.8rem;
@@ -525,7 +508,6 @@
             pointer-events: none;
         }
 
-        /* mobile tweaks */
         @media (max-width: 480px) {
             .love-counter {
                 font-size: 1.1rem;
@@ -548,19 +530,25 @@
                 font-size: 1.4rem;
             }
         }
+
+        /* image styling for page 4 */
+        .red-box img {
+            max-width: 100%;
+            border-radius: 20px;
+            display: block;
+            margin: 0 auto;
+        }
     </style>
 </head>
 <body>
     <div class="bg-texture"></div>
     <div class="heart-rain" id="heartRain"></div>
     <div class="love-counter">❤️ 143</div>
-    <!-- floating sparkles -->
     <div class="float-heart" style="top: 15%; left: 8%;">🌸</div>
     <div class="float-heart" style="top: 75%; left: 85%;">💘</div>
     <div class="float-heart" style="top: 30%; left: 20%;">✨</div>
     <div class="sparkle" style="top: 10%; left: 60%;">★</div>
 
-    <!-- pages container -->
     <div class="pages">
         <!-- PAGE 1 -->
         <div class="page active" id="page1">
@@ -610,19 +598,16 @@
             <div class="cursed-cross next-button" data-next="4">✝💌❤️<span class="press-text">press me</span></div>
         </div>
 
-        <!-- PAGE 4 (flowers + DOG) – now with image placeholder -->
+        <!-- PAGE 4 (flowers + DOG) - now with an actual image -->
         <div class="page" id="page4">
             <div class="hearts-row"></div>
             <div class="page-content" id="page4Content">
                 <div class="red-box">
-                    <!-- ===== INSERT YOUR FLOWER IMAGE HERE ===== -->
-                    <!-- Replace the src attribute with your image URL or file path -->
-                    <img src="IMG_2711.jpg" style="max-width:100%; border-radius:20px; display:block;">
-                    <!-- If you don't have an image yet, the alt text will show briefly, but you can also keep a placeholder emoji fallback if needed -->
+                    <!-- Replace "your-flower-image.jpg" with your own flower picture -->
+                    <img src="IMG_2711.jpg" alt="Flowers for you">
                 </div>
                 <h2 class="sub-text draw-text">Flowers for you my beloved</h2>
             </div>
-            <!-- secret dog (clickable) -->
             <div class="dog-container" id="secretDog">
                 <span class="dog-emoji">🐕</span>
                 <span class="dog-smile">😊</span>
@@ -676,7 +661,6 @@
 
     <script>
         (function() {
-            // heart rain generator
             const rainContainer = document.getElementById('heartRain');
             const hearts = ['❤️','🧡','💛','💚','💙','💜','🤍','💖','💗','💘','💝'];
             for (let i=0; i<25; i++) {
@@ -690,7 +674,6 @@
                 rainContainer.appendChild(d);
             }
 
-            // page navigation
             const pages = document.querySelectorAll('.page');
             function showPage(num) {
                 pages.forEach(p => p.classList.remove('active'));
@@ -717,7 +700,6 @@
                 });
             });
 
-            // PRESS AND HOLD (page5)
             const holdHeart = document.getElementById('holdHeart');
             const fillBar = document.getElementById('heartFill');
             let holdInterval, holdProgress = 0;
@@ -763,7 +745,6 @@
                 }
             }
 
-            // CLICK ANYWHERE HEART SHOWER (page6)
             const page6 = document.getElementById('page6');
             const showerContainer = document.getElementById('heartShower');
             page6.addEventListener('click', function(e) {
@@ -787,7 +768,6 @@
                 setTimeout(() => page6.style.boxShadow = 'none', 200);
             });
 
-            // SECRET DOG
             const dog = document.getElementById('secretDog');
             dog.addEventListener('click', () => {
                 dog.classList.add('clicked');
@@ -804,7 +784,6 @@
                 }, 7000);
             });
 
-            // initial animations
             window.addEventListener('load', () => {
                 document.querySelectorAll('#page1 .draw-text').forEach(el => el.classList.add('draw-text'));
                 document.getElementById('page1Content')?.classList.add('slide-up');
